@@ -1,51 +1,44 @@
-var MongoClient = require('mongodb').MongoClient;
-var listen = require('./receive');
+var restify = require('restify');
+var createEventHandler = require('./createEventHandler');
+var getEventsHandler = require('./getEventHandler');
+var port = process.env.PORT || 1338;
+var databaseName = process.env.MONGODB_DATABASE_NAME || 'hitmisstargetservice';
 
-var databaseName = 'hitmisstargetservice';
-var mongodbUrl = process.env.MONGODB_URL + '/' + databaseName;
+var mongodbConfig = {
+    databaseName: databaseName,
+    url: process.env.MONGODB_URL + '/' + databaseName
+};
 
-console.log(mongodbUrl);
+var server = restify.createServer();
+server.get('/events', getEvents);
+server.post('/events', createEvent);
 
-listen('hit-miss-target-event', registerTargetEvent);
+server.listen(port, function () {
+    console.log('%s listening at %s', server.name, server.url);
+})
 
-function registerTargetEvent (message){
-    console.log(message);
+function createEvent (request, response, next) {
+    getRequestBodyAsJson(request, function (jsonBody) {
+        createEventHandler(mongodbConfig, jsonBody);
+        response.send('TODO: Restful created response');
+        next();
+    });
+};
 
-    if (message.vibration_factor > 0.5){
-        console.log('HIT!');
-        message.hit = true;
-    }
-    else {
-        console.log('miss.... lol');
-        message.hit = false;
-    }
+function getEvents (request, response, next) {
+    getEventsHandler(mongodbConfig, function (jsonResponseBody) {
+        response.send(jsonResponseBody);
+        next();
+    });
+};
 
-    MongoClient.connect(mongodbUrl, function(err, db) {
-        if (err) {
-            console.log(err);
-            throw err;
-        }
-
-        var database = db.db(databaseName);
-
-        console.log(database.databaseName);
-
-        var myobj = message;
-        
-        if (!database.collection || !database.collection('events')){
-            database.createCollection('eventls', function(err, res) {
-                if (err) throw err;
-                console.log('Collection created!');
-              });
-        }
-
-        database.collection('events').insertOne(myobj, function(err, res) {
-            if (err) {
-                console.log(err);
-                throw err;
-            }
-          console.log('1 document inserted');
-          db.close();
-        });
-      });
-}
+function getRequestBodyAsJson(request, onParsed) {
+    let body = [];
+    request.on('data', (chunk) => {
+      body.push(chunk);
+    }).on('end', () => {
+      body = Buffer.concat(body).toString();
+      var jsonBody = JSON.parse(body);
+      onParsed(jsonBody);
+    });
+};
