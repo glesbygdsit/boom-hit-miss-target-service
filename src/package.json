@@ -1,0 +1,15 @@
+{
+  "name": "boom-hit-miss-target-service",
+  "version": "0.0.0",
+  "description": "boom-hit-miss-target-service",
+  "main": "service.js",
+  "author": {
+    "name": "Glit"
+  },
+  "scripts": {
+    "start": "node service.js"
+  },
+  "dependencies": {
+    "amqplib": "^0.3.0"
+  }
+}
