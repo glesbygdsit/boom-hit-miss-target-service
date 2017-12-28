@@ -4,4 +4,4 @@ node_js:
   - "9"
 
 script: 
-  - npm test
+  - echo "CI Wold"
