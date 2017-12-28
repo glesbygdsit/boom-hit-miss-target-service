@@ -17,7 +17,8 @@ The hit-miss-target-event messages are json formatted in the following format:
   "target_type": "hit_miss_target",
   "target_id": "80085",
   "event": "vibration_triggered",
-  "vibration_factor": 0.302
+  "vibration_factor": 0.302,
+  "timestamp": "2017-12-28 18:16:13"
 }
 ```
 
