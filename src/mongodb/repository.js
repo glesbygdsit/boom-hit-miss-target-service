@@ -1,6 +1,6 @@
 var MongoClient = require('mongodb').MongoClient;
 
-var mongodbUrl = process.env.MONGODB_URL || 'localhost:27017';
+var mongodbUrl = process.env.MONGODB_URL || 'mongodb://localhost:27017';
 
 class Repository {
     
@@ -17,7 +17,6 @@ class Repository {
         MongoClient.connect(this.connectUrl, function(err, db) {
             if (err) {
                 onError(err);
-                db.close();
                 throw err;
             }
     
@@ -48,7 +47,6 @@ class Repository {
         MongoClient.connect(this.connectUrl, function(err, db) {
             if (err) {
                 onError(err);
-                db.close();
                 throw err;
             }
 
