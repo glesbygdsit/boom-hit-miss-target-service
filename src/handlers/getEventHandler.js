@@ -11,6 +11,6 @@ function onSuccess(){
     console.log(`Successfully handled getEvent request`);
 }
 
-function onError(){
+function onError(err){
     console.log(`createEvent handler faied to process request, error: ${err}`);
 }
