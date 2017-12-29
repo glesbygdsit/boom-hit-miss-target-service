@@ -23,7 +23,7 @@ function handle(hitMissEvent){
     eventRepository.insert(hitMissEvent, onError,  onSuccess)
 }
 
-function onError(){
+function onError(err){
     console.log(`createEvent handler faied to process request, error: ${err}`);
 }
 
