@@ -17,7 +17,6 @@ class Repository {
         MongoClient.connect(this.connectUrl, function(err, db) {
             if (err) {
                 onError(err);
-                db.close();
                 throw err;
             }
     
@@ -48,7 +47,6 @@ class Repository {
         MongoClient.connect(this.connectUrl, function(err, db) {
             if (err) {
                 onError(err);
-                db.close();
                 throw err;
             }
 
