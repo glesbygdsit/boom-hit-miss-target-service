@@ -1,51 +1,41 @@
-var MongoClient = require('mongodb').MongoClient;
-var listen = require('./receive');
 
-var databaseName = 'hitmisstargetservice';
-var mongodbUrl = process.env.MONGODB_URL + '/' + databaseName;
+var port = process.env.PORT || 1338;
 
-console.log(mongodbUrl);
+var restify = require('restify');
 
-listen('hit-miss-target-event', registerTargetEvent);
+var createEventHandler = require('./handlers/createEventHandler');
+var getEventsHandler = require('./handlers/getEventHandler');
 
-function registerTargetEvent (message){
-    console.log(message);
+var server = restify.createServer();
+server.get('/events', getEvents);
+server.post('/events', createEvent);
 
-    if (message.vibration_factor > 0.5){
-        console.log('HIT!');
-        message.hit = true;
-    }
-    else {
-        console.log('miss.... lol');
-        message.hit = false;
-    }
+server.listen(port, function () {
+    console.log('%s listening at %s', server.name, server.url);
+})
 
-    MongoClient.connect(mongodbUrl, function(err, db) {
-        if (err) {
-            console.log(err);
-            throw err;
-        }
+function createEvent (request, response, next) {
+    getRequestBodyAsJson(request, function (jsonBody) {
+        createEventHandler(jsonBody);
+        response.send('TODO: Restful created response');
+        next();
+    });
+};
 
-        var database = db.db(databaseName);
+function getEvents (request, response, next) {
+    getEventsHandler(function (jsonResponseBody) {
+        response.send(jsonResponseBody);
+        next();
+    });
+};
 
-        console.log(database.databaseName);
-
-        var myobj = message;
-        
-        if (!database.collection || !database.collection('events')){
-            database.createCollection('eventls', function(err, res) {
-                if (err) throw err;
-                console.log('Collection created!');
-              });
-        }
-
-        database.collection('events').insertOne(myobj, function(err, res) {
-            if (err) {
-                console.log(err);
-                throw err;
-            }
-          console.log('1 document inserted');
-          db.close();
-        });
-      });
-}
+function getRequestBodyAsJson(request, onParsed) {
+    let body = [];
+    request.on('data', (chunk) => {
+      body.push(chunk);
+    }).on('end', () => {
+      body = Buffer.concat(body).toString();
+      var jsonBody = JSON.parse(body);
+      onParsed(jsonBody);
+    });
+};
