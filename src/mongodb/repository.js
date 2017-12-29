@@ -16,7 +16,7 @@ class Repository {
 
         MongoClient.connect(this.connectUrl, function(err, db) {
             if (err) {
-                onerror(err);
+                onError(err);
                 db.close();
                 throw err;
             }
@@ -24,14 +24,14 @@ class Repository {
             var database = db.db(databaseName);
     
             if (!database.collection || !database.collection(collectionName)){
-                onerror(err);
+                onError(err);
                 db.close();
                 throw err;
             }
     
             database.collection(collectionName).find({}).toArray(function(err, result) {
                 if (err) {
-                    onerror(err);
+                    onError(err);
                     db.close();
                     throw err;
                 }
@@ -47,7 +47,7 @@ class Repository {
 
         MongoClient.connect(this.connectUrl, function(err, db) {
             if (err) {
-                onerror(err);
+                onError(err);
                 db.close();
                 throw err;
             }
@@ -57,7 +57,7 @@ class Repository {
             if (!database.collection || !database.collection(collectionName)){
                 database.createCollection(collectionName, function(err, res) {
                     if (err){
-                        onerror(err);
+                        onError(err);
                         db.close();
                         throw err;
                     } 
@@ -67,7 +67,7 @@ class Repository {
 
             database.collection(collectionName).insertOne(object, function(err, res) {
                 if (err){
-                    onerror(err);
+                    onError(err);
                     db.close();
                     throw err;
                 }
