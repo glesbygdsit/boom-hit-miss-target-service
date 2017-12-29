@@ -1,13 +1,10 @@
-var restify = require('restify');
-var createEventHandler = require('./createEventHandler');
-var getEventsHandler = require('./getEventHandler');
-var port = process.env.PORT || 1338;
-var databaseName = process.env.MONGODB_DATABASE_NAME || 'hitmisstargetservice';
 
-var mongodbConfig = {
-    databaseName: databaseName,
-    url: process.env.MONGODB_URL + '/' + databaseName
-};
+var port = process.env.PORT || 1338;
+
+var restify = require('restify');
+
+var createEventHandler = require('./handlers/createEventHandler');
+var getEventsHandler = require('./handlers/getEventHandler');
 
 var server = restify.createServer();
 server.get('/events', getEvents);
@@ -19,14 +16,14 @@ server.listen(port, function () {
 
 function createEvent (request, response, next) {
     getRequestBodyAsJson(request, function (jsonBody) {
-        createEventHandler(mongodbConfig, jsonBody);
+        createEventHandler(jsonBody);
         response.send('TODO: Restful created response');
         next();
     });
 };
 
 function getEvents (request, response, next) {
-    getEventsHandler(mongodbConfig, function (jsonResponseBody) {
+    getEventsHandler(function (jsonResponseBody) {
         response.send(jsonResponseBody);
         next();
     });
