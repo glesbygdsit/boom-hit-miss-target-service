@@ -1,3 +1,4 @@
+"use strict";
 
 var port = process.env.PORT || 1338;
 

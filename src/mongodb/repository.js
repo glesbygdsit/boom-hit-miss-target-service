@@ -1,3 +1,5 @@
+"use strict";
+
 var MongoClient = require('mongodb').MongoClient;
 
 var mongodbUrl = process.env.MONGODB_URL || 'mongodb://localhost:27017';
@@ -59,7 +61,7 @@ class Repository {
                         db.close();
                         throw err;
                     } 
-                    console.log(`Collection ${collectionName} created`);
+                    console.log(`Collection ${collectionName} created with result ${res}`);
                 });
             }
 

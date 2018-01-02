@@ -1,3 +1,5 @@
+"use strict";
+
 var databaseName = 'hitmisstargetservice';
 var eventRepository = require('../mongodb/repository')(databaseName, 'events');
 
