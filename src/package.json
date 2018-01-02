@@ -7,11 +7,18 @@
     "name": "Glit"
   },
   "scripts": {
-    "start": "node service.js"
+    "start": "node service.js",
+    "test" : "npm-run-all --parallel --continue-on-error --silent jshint",
+    
+    "jshint": "jshint ."
   },
   "dependencies": {
     "amqplib": "^0.3.0",
     "mongodb": "^3.0.1",
     "restify": "^6.3.4"
+  },
+  "devDependencies": {
+    "jshint": "^2.9.5",
+    "npm-run-all": "^4.1.2"
   }
 }
