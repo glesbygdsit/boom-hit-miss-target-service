@@ -18,8 +18,8 @@ function listen(queue, onReceive) {
 
         ch.consume(q, function (msg) {
           var json = JSON.parse(msg.content.toString());
-          onReceive(json) 
+          onReceive(json);
         }, {noAck: true});
       });
-    })
-};
+    });
+}

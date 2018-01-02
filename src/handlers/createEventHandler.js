@@ -20,7 +20,7 @@ function handle(hitMissEvent){
         hitMissEvent.timestamp = new Date().toLocaleString();
     }
 
-    eventRepository.insert(hitMissEvent, onError,  onSuccess)
+    eventRepository.insert(hitMissEvent, onError,  onSuccess);
 }
 
 function onError(err){

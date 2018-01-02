@@ -12,7 +12,7 @@ server.post('/events', createEvent);
 
 server.listen(port, function () {
     console.log('%s listening at %s', server.name, server.url);
-})
+});
 
 function createEvent (request, response, next) {
     getRequestBodyAsJson(request, function (jsonBody) {
@@ -20,14 +20,14 @@ function createEvent (request, response, next) {
         response.send('TODO: Restful created response');
         next();
     });
-};
+}
 
 function getEvents (request, response, next) {
     getEventsHandler(function (jsonResponseBody) {
         response.send(jsonResponseBody);
         next();
     });
-};
+}
 
 function getRequestBodyAsJson(request, onParsed) {
     let body = [];
@@ -38,4 +38,4 @@ function getRequestBodyAsJson(request, onParsed) {
       var jsonBody = JSON.parse(body);
       onParsed(jsonBody);
     });
-};
+}

@@ -34,7 +34,7 @@ class Repository {
                     db.close();
                     throw err;
                 }
-                onSuccess(result)
+                onSuccess(result);
                 db.close();
               });
         });
@@ -78,4 +78,4 @@ class Repository {
 
 module.exports = function (databaseName, collectionName) {
     return new Repository(databaseName, collectionName);
-}
+};
