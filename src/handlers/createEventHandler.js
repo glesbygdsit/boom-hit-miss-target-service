@@ -1,3 +1,5 @@
+"use strict";
+
 var databaseName = 'hitmisstargetservice';
 var eventRepository = require('../mongodb/repository')(databaseName, 'events');
 
@@ -20,7 +22,7 @@ function handle(hitMissEvent){
         hitMissEvent.timestamp = new Date().toLocaleString();
     }
 
-    eventRepository.insert(hitMissEvent, onError,  onSuccess)
+    eventRepository.insert(hitMissEvent, onError,  onSuccess);
 }
 
 function onError(err){
