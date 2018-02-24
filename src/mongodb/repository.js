@@ -4,77 +4,75 @@ var MongoClient = require('mongodb').MongoClient;
 
 var mongodbUrl = process.env.MONGODB_URL || 'mongodb://localhost:27017';
 
+var database;
+
+
 class Repository {
-    
     constructor(databaseName, collectionName) {
         this.databaseName = databaseName;
         this.collectionName = collectionName;
         this.connectUrl = mongodbUrl + '/' + databaseName;
-    }
-
-    getAll(onError, onSuccess) {
-        var databaseName = this.databaseName;
-        var collectionName = this.collectionName;
+        
 
         MongoClient.connect(this.connectUrl, function(err, db) {
             if (err) {
-                onError(err);
+                // onError(err);
+                console.log(`MongoClient.connect failed, error: ${err}`);
                 throw err;
             }
-    
-            var database = db.db(databaseName);
-    
-            if (!database.collection || !database.collection(collectionName)){
-                onError(err);
-                db.close();
-                throw err;
+            database = db.db(databaseName);
+        });
+    }
+
+    getAll(object, onError, onSuccess){
+        this.getDatabaseCollection(onError, function(databaseCollection){
+            if(databaseCollection){ // onödig?
+                databaseCollection.find({}).toArray(function(err, res){
+                    if(err){
+                        onError(err);
+                        return false;
+                    }
+                    onSuccess(res);
+                    return true;
+                });
             }
-    
-            database.collection(collectionName).find({}).toArray(function(err, result) {
-                if (err) {
-                    onError(err);
-                    db.close();
-                    throw err;
-                }
-                onSuccess(result);
-                db.close();
-              });
         });
     }
 
     insert(object, onError, onSuccess){
-        var databaseName = this.databaseName;
-        var collectionName = this.collectionName;
-
-        MongoClient.connect(this.connectUrl, function(err, db) {
-            if (err) {
-                onError(err);
-                throw err;
-            }
-
-            var database = db.db(databaseName);
-
-            if (!database.collection || !database.collection(collectionName)){
-                database.createCollection(collectionName, function(err, res) {
-                    if (err){
+        this.getDatabaseCollection(onError, function(databaseCollection){
+            if(databaseCollection){ // onödig?
+                databaseCollection.insertOne(object, function(err, res){
+                    if(err){
                         onError(err);
-                        db.close();
-                        throw err;
-                    } 
-                    console.log(`Collection ${collectionName} created with result ${res}`);
+                        return false;
+                    }
+                    onSuccess(res.insertedId);
+                    return true;
                 });
             }
+        });
+    }
 
-            database.collection(collectionName).insertOne(object, function(err, res) {
+    getDatabaseCollection(onError, fn) {
+        var collectionName = this.collectionName;
+
+        if (!database.collection || !database.collection(collectionName)){
+            database.createCollection(collectionName, function(err, res) {
                 if (err){
                     onError(err);
-                    db.close();
+                    // database.close();
                     throw err;
-                }
-                onSuccess(res.insertedId);
-                db.close();
+                } 
+                console.log(`Collection ${collectionName} created`);
             });
-        });
+        }
+
+        if(!fn(database.collection(collectionName))){
+            // database.close();
+            // throw err;
+        }
+        // database.close();
     }
 }
 
