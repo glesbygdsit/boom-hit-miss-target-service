@@ -10,5 +10,5 @@ function handle(callback){
 }
 
 function onError(err){
-    console.log(`createEvent handler faied to process request, error: ${err}`);
+    console.log(`getEvent handler faied to process request, error: ${err}`);
 }

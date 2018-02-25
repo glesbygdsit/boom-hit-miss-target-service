@@ -1,22 +1,17 @@
 "use strict";
 
 var MongoClient = require('mongodb').MongoClient;
-
 var mongodbUrl = process.env.MONGODB_URL || 'mongodb://localhost:27017';
-
 var database;
-
 
 class Repository {
     constructor(databaseName, collectionName) {
         this.databaseName = databaseName;
         this.collectionName = collectionName;
         this.connectUrl = mongodbUrl + '/' + databaseName;
-        
 
         MongoClient.connect(this.connectUrl, function(err, db) {
             if (err) {
-                // onError(err);
                 console.log(`MongoClient.connect failed, error: ${err}`);
                 throw err;
             }
@@ -24,33 +19,29 @@ class Repository {
         });
     }
 
-    getAll(object, onError, onSuccess){
+    getAll(onError, onSuccess){
         this.getDatabaseCollection(onError, function(databaseCollection){
-            if(databaseCollection){ // onödig?
-                databaseCollection.find({}).toArray(function(err, res){
-                    if(err){
-                        onError(err);
-                        return false;
-                    }
-                    onSuccess(res);
-                    return true;
-                });
-            }
+            databaseCollection.find({}).toArray(function(err, res){
+                if(err){
+                    onError(err);
+                    return false;
+                }
+                onSuccess(res);
+                return true;
+            });
         });
     }
 
     insert(object, onError, onSuccess){
         this.getDatabaseCollection(onError, function(databaseCollection){
-            if(databaseCollection){ // onödig?
-                databaseCollection.insertOne(object, function(err, res){
-                    if(err){
-                        onError(err);
-                        return false;
-                    }
-                    onSuccess(res.insertedId);
-                    return true;
-                });
-            }
+            databaseCollection.insertOne(object, function(err, res){
+                if(err){
+                    onError(err);
+                    return false;
+                }
+                onSuccess(res.insertedId);
+                return true;
+            });
         });
     }
 
@@ -63,16 +54,12 @@ class Repository {
                     onError(err);
                     // database.close();
                     throw err;
-                } 
-                console.log(`Collection ${collectionName} created`);
+                }
+                console.log(`Collection ${collectionName} created with result ${res}`);
             });
         }
-
-        if(!fn(database.collection(collectionName))){
-            // database.close();
-            // throw err;
-        }
-        // database.close();
+        
+        fn(database.collection(collectionName));
     }
 }
 
